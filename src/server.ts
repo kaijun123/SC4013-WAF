@@ -7,20 +7,10 @@ dotenv.config();
 (async () => {
   const app: Express = express();
 
-  // var corsOptions = {
-  //   origin: 'http://localhost:3000',
-  //   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  //   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-  // }
-  // app.use(cors(corsOptions))
-
   app.use(cors())
   app.use(express.json())
 
-  const port = process.env.PORT || 3001;
-
-  const mongoURI = process.env.MONGO_URI || ""
-  console.log("[mongoURI]: ", mongoURI)
+  const port = process.env.PORT || 3000;
 
   app.get("/healthz", (req: Request, res: Response) => {
     res.status(200).send("Healthy");
