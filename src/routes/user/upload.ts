@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 import fs from "fs";
-import path from "path";
 import { QueryTypes } from "sequelize";
 import { sequelize } from "src/models";
 import Book from "src/models/Book";
@@ -29,7 +28,7 @@ export const uploadHandler = async (req: Request, res: Response, next: NextFunct
     if (isExist) return res.status(400).send('Book already exists');
 
     // insert the file into the db
-    // vulnerable to xss and sql injection
+    // VULNERABLE CODE: SQL Injection
     await sequelize.query(`
       INSERT INTO "books" ("id", "title", "author")
       VALUES('${id}', '${title}', '${author}')
@@ -38,8 +37,8 @@ export const uploadHandler = async (req: Request, res: Response, next: NextFunct
       type: QueryTypes.INSERT
     })
 
+    // VULNERABLE CODE: The attacked can upload malicious files
     const uploadPath = getBookPath(id)
-    // console.log("uploadPath", uploadPath)
 
     // move the book into the /books directory
     uploadedFile.mv(uploadPath, function (err) {

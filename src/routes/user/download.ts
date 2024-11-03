@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express"
-import path from "path"
 import Book from "src/models/Book"
+import { getBookPath } from "src/utils/utils"
 
 export const downloadHandler = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -17,8 +17,9 @@ export const downloadHandler = async (req: Request, res: Response, next: NextFun
     }
     console.log("isExist", isExist)
 
-    const __dirname = path.resolve();
-    const bookPath = path.join(__dirname, "books", `${id}.pdf`)
+    // VULNERABLE CODE: Social Engineering + Reflected XSS
+    // The victim can be made to download malicious code that was uploaded to the server
+    const bookPath = getBookPath(id as string)
 
     // TODO: check if the file exists
 
