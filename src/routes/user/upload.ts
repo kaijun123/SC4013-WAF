@@ -2,36 +2,43 @@ import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 import fs from "fs";
 import path from "path";
-import Book from "src/db/book";
+import { QueryTypes } from "sequelize";
+import { sequelize } from "src/models";
+import Book from "src/models/Book";
 import { getBookPath } from "src/utils/utils";
 
 export const uploadHandler = async (req: Request, res: Response, next: NextFunction) => {
 
   let uploadedFile: UploadedFile | null = null
-  let book = null
+  let id = ""
   try {
     // check if file was submitted
-    if (!req.files || !req.files.file) {
-      return res.status(400).send('No files were uploaded');
-    }
+    if (!req.files || !req.files.file) return res.status(400).send('No files were uploaded');
 
     // check if title was provided
-    const title = req.body.title
-    if (!title || title === "") {
-      return res.status(400).send('Title not provided');
-    }
+    const { title, author } = req.body
+    if (!title || title === "") return res.status(400).send('Title not provided');
+    if (!author || author === "") return res.status(400).send('Author not provided');
 
     uploadedFile = req.files.file as UploadedFile
 
+    id = Book.genId(title, author)
+
+    // check if the file exists
+    const isExist = await Book.findOne({ where: { id: id } })
+    if (isExist) return res.status(400).send('Book already exists');
+
     // insert the file into the db
-    book = await Book.create({
-      title: title,
-      // status: BookStatus.Available,
-      // filename: uploadedFile.name,
-      // borrower: "",
+    // vulnerable to xss and sql injection
+    await sequelize.query(`
+      INSERT INTO "books" ("id", "title", "author")
+      VALUES('${id}', '${title}', '${author}')
+      `, {
+      raw: true,
+      type: QueryTypes.INSERT
     })
 
-    const uploadPath = getBookPath(String(book._id))
+    const uploadPath = getBookPath(id)
     // console.log("uploadPath", uploadPath)
 
     // move the book into the /books directory
@@ -41,7 +48,7 @@ export const uploadHandler = async (req: Request, res: Response, next: NextFunct
     });
 
     // Return a web page showing information about the file
-    res.json({
+    return res.json({
       "File-Name": `${uploadedFile.name}`,
       "File-Size": `${uploadedFile.size}`,
       "File_MD5_Hash": `${uploadedFile.md5}`,
@@ -54,8 +61,8 @@ export const uploadHandler = async (req: Request, res: Response, next: NextFunct
       console.error(err)
     })
 
-    if (book) await Book.deleteOne({ _id: book._id})
+    if (id) await Book.destroy({ where: { id: id } })
 
-    res.status(500).send("Server error")
+    return res.status(500).send("Server error")
   }
 }

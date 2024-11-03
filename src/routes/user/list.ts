@@ -1,10 +1,22 @@
 import { NextFunction, Request, Response } from "express"
-import Book from "src/db/book"
+import { QueryTypes } from "sequelize"
+import { sequelize } from "src/models"
 
-// only select specific columns
+
 export const listHandler = async (req: Request, res: Response, next: NextFunction) => {
-  // const books = await Book.find({}).where("status").equals(BookStatus.Available).select("title status")
-  const books = await Book.find({})
-  console.log("books", books)
-  res.send(books)
+
+  try {
+    const books = await sequelize.query(
+      `SELECT * FROM "books"`,
+      {
+        raw: true,
+        type: QueryTypes.SELECT
+      }
+    )
+  
+    return res.send({ "books": books })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Internal Server Error")
+  }
 }

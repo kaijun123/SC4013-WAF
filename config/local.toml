@@ -1,0 +1,11 @@
+[datasources]
+  name                = "default-db"
+  accessType          = "password"
+  username            = "postgres"
+  password            = ""
+  schema              = "sc4013"
+  [datasources.options]
+    host              = "localhost"
+    timezone          = "+08:00"
+    dialect           = "postgres"
+    port              = "5432"
