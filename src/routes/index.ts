@@ -5,7 +5,7 @@ import adminRouter from "./admin"
 const router = Router()
 
 router.get("/healthz", (req: Request, res: Response) => {
-  res.status(200).send("Healthy");
+  res.status(200).json({ "status": "success" });
 });
 
 router.use("/user", userRouter)

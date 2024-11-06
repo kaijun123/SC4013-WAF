@@ -8,4 +8,4 @@
     host              = "localhost"
     timezone          = "+08:00"
     dialect           = "postgres"
-    port              = "5431"
+    port              = "5432"

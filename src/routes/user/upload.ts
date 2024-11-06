@@ -12,12 +12,13 @@ export const uploadHandler = async (req: Request, res: Response, next: NextFunct
   let id = ""
   try {
     // check if file was submitted
-    if (!req.files || !req.files.file) return res.status(400).send('No files were uploaded');
+    console.log("req.files", req.files)
+    if (!req.files || !req.files.file) return res.status(400).json({ "status": "No files were uploaded" });
 
     // check if title was provided
     const { title, author } = req.body
-    if (!title || title === "") return res.status(400).send('Title not provided');
-    if (!author || author === "") return res.status(400).send('Author not provided');
+    if (!title || title === "") return res.status(400).json({ "status": "Title not provided" });
+    if (!author || author === "") return res.status(400).json({ "status": "Author not provided" });
 
     uploadedFile = req.files.file as UploadedFile
 
@@ -25,7 +26,7 @@ export const uploadHandler = async (req: Request, res: Response, next: NextFunct
 
     // check if the file exists
     const isExist = await Book.findOne({ where: { id: id } })
-    if (isExist) return res.status(400).send('Book already exists');
+    if (isExist) return res.status(400).send({ "status": "Book already exists" });
 
     // insert the file into the db
     // VULNERABLE CODE: SQL Injection
@@ -39,6 +40,7 @@ export const uploadHandler = async (req: Request, res: Response, next: NextFunct
 
     // VULNERABLE CODE: The attacked can upload malicious files
     const uploadPath = getBookPath(id)
+    // console.log("uploadPath", uploadPath)
 
     // move the book into the /books directory
     uploadedFile.mv(uploadPath, function (err) {
@@ -47,12 +49,7 @@ export const uploadHandler = async (req: Request, res: Response, next: NextFunct
     });
 
     // Return a web page showing information about the file
-    return res.json({
-      "File-Name": `${uploadedFile.name}`,
-      "File-Size": `${uploadedFile.size}`,
-      "File_MD5_Hash": `${uploadedFile.md5}`,
-      "File_Mime_Type": `${uploadedFile.mimetype}`
-    })
+    return res.status(200).json({ "status": "success", "id": id })
 
   } catch (e) {
     console.error(e)
@@ -62,6 +59,6 @@ export const uploadHandler = async (req: Request, res: Response, next: NextFunct
 
     if (id) await Book.destroy({ where: { id: id } })
 
-    return res.status(500).send("Server error")
+    return res.status(500).json({ "status": "fail" })
   }
 }

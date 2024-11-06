@@ -7,15 +7,16 @@ export const downloadHandler = async (req: Request, res: Response, next: NextFun
   try {
     const { id } = req.query
     if (!id || id === "") {
-      return res.status(400).send("Fail: id not provided")
+      return res.status(400).json({ "status": "Fail: invalid id" })
     }
     console.log("id", id)
 
     const isExist = await Book.findOne({ where: { id: id } })
     if (!isExist) {
-      return res.status(400).send("Fail: invalid id")
+      return res.status(400).json({ "status": "Fail: invalid id" })
+      
     }
-    console.log("isExist", isExist)
+    // console.log("isExist", isExist)
 
     // VULNERABLE CODE: Social Engineering + Reflected XSS
     // The victim can be made to download malicious code that was uploaded to the server
@@ -27,6 +28,6 @@ export const downloadHandler = async (req: Request, res: Response, next: NextFun
     return res.status(200).sendFile(bookPath)
   } catch (error) {
     console.error(error)
-    return res.status(200).sendFile("Internal Server Error")
+    return res.status(200).send("Internal Server Error")
   }
 }
