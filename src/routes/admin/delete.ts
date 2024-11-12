@@ -5,7 +5,7 @@ import { getBookPath } from "src/utils/utils"
 
 export const deleteHandler = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.body
-  if (!id || id === "") return res.status(400).send("Fail: id not provided")
+  if (!id || id === "") return res.status(400).json({ "status": "Fail: id not provided" })
 
   const isExist = await Book.findOne({
     where: {
@@ -24,9 +24,9 @@ export const deleteHandler = async (req: Request, res: Response, next: NextFunct
     //   console.error(err)
     // })
 
-    return res.status(200).send("Success")
+    return res.status(200).json({ "status": "Success" })
   }
   else {
-    return res.status(400).send("Book does not exist")
+    return res.status(400).json({ "status": "Book does not exist" })
   }
 }

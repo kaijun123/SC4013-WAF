@@ -26,7 +26,7 @@ export const uploadHandler = async (req: Request, res: Response, next: NextFunct
 
     // check if the file exists
     const isExist = await Book.findOne({ where: { id: id } })
-    if (isExist) return res.status(400).send({ "status": "Book already exists" });
+    if (isExist) return res.status(400).json({ "status": "Book already exists" });
 
     // insert the file into the db
     // VULNERABLE CODE: SQL Injection
@@ -45,7 +45,7 @@ export const uploadHandler = async (req: Request, res: Response, next: NextFunct
     // move the book into the /books directory
     uploadedFile.mv(uploadPath, function (err) {
       if (err)
-        return res.status(500).send(err);
+        return res.status(500).json({ "status": err });
     });
 
     // Return a web page showing information about the file

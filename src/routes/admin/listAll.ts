@@ -14,9 +14,9 @@ export const listAllHandler = async (req: Request, res: Response, next: NextFunc
       }
     )
   
-    return res.send({ "books": books })
+    return res.status(200).json({ "books": books })
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Internal Server Error")
+    return res.status(500).json({"status": "Internal Server Error"})
   }
 }

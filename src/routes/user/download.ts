@@ -14,7 +14,7 @@ export const downloadHandler = async (req: Request, res: Response, next: NextFun
     const isExist = await Book.findOne({ where: { id: id } })
     if (!isExist) {
       return res.status(400).json({ "status": "Fail: invalid id" })
-      
+
     }
     // console.log("isExist", isExist)
 
@@ -28,6 +28,6 @@ export const downloadHandler = async (req: Request, res: Response, next: NextFun
     return res.status(200).sendFile(bookPath)
   } catch (error) {
     console.error(error)
-    return res.status(200).send("Internal Server Error")
+    return res.status(500).json({ "status": "Internal Server Error" })
   }
 }

@@ -4,9 +4,8 @@ export const localFileInclusionHandler = async (req: Request, res: Response, nex
 
   try {
     const { path } = req.query
-    console.log("path", path)
     if (!path || path === "") {
-      return res.status(400).send("Fail: path not provided")
+      return res.status(400).json({ "status": "Fail: path not provided" })
     }
 
     // Transfers the file at the given path. Sets the Content-Type response HTTP header field based on the filename’s extension.
@@ -14,6 +13,6 @@ export const localFileInclusionHandler = async (req: Request, res: Response, nex
     return res.status(200).sendFile(path as string)
   } catch (error) {
     console.error(error)
-    return res.status(200).send("Internal Server Error")
+    return res.status(200).json({ "status": "Internal Server Error" })
   }
 }

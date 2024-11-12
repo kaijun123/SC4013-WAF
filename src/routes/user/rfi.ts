@@ -5,9 +5,9 @@ export const remoteFileInclusionHandler = async (req: Request, res: Response, ne
 
   try {
     const { url: url } = req.query
-    console.log("url", url)
+    // console.log("url", url)
     if (!url || url === "") {
-      return res.status(400).send("Fail: url not provided")
+      return res.status(400).json({ "status": "Fail: url not provided" })
     }
 
     // Fetch external resource
@@ -17,9 +17,9 @@ export const remoteFileInclusionHandler = async (req: Request, res: Response, ne
     const data = await response.json()
     console.log("data", data)
 
-    return res.status(200).send(data);
+    return res.status(200).json({ "data": data });
   } catch (error) {
     console.error(error)
-    return res.status(200).send("Internal Server Error")
+    return res.status(200).json({ "status": "Internal Server Error" })
   }
 }
