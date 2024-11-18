@@ -2,17 +2,17 @@ const path = require('path')
 const fs = require('fs')
 const FormData = require('form-data');
 const { fileFromPath } = require("formdata-node/file-from-path")
+require('dotenv').config()
 
 const axios = require('axios');
 
-const base = "http://sc4013-alb-257362673.ap-southeast-1.elb.amazonaws.com:80"
-// const base = "http://47.129.190.238:3000"
+const base = process.env.WAF
+// const base = proecess.env.EC2
 // const base = "http://localhost:3000"
 
-const sgIP = "180.129.28.186"
-const sgIP2 = "180.129.28.187"
-const usIP = "54.129.255.255"
-const adminIP = "155.69.182.20" // hall room ip
+const usIP = process.env.US_IP
+const sgIP = process.env.SG_IP
+const adminIP = process.env.ADMIN_IP
 
 let id = ""
 
