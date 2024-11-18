@@ -2,8 +2,8 @@ import { Router } from "express";
 // import { uploadMiddleware } from "src/middleware/file";
 import { deleteHandler } from "./delete";
 import { deleteAllHandler } from "./deleteAll";
-import { listAllHandler } from "./listAll";
-import { renameHandler } from "./rename";
+// import { listAllHandler } from "./listAll";
+import { insertHandler } from "./insert";
 // import { uploadHandler } from "../user/upload";
 
 const router = Router()
@@ -11,7 +11,7 @@ const router = Router()
 // router.get("/listAll", listAllHandler)
 router.delete("/delete", deleteHandler)
 router.delete("/deleteAll", deleteAllHandler)
-router.patch("/rename", renameHandler)
+router.post("/insert", insertHandler)
 // router.post("/upload", uploadMiddleware, uploadHandler)
 
 export default router
